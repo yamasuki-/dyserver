@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { EndpointConfig, HttpMethod, ResponseSet, ResponseMode } from '@/types';
 import { updateEndpoint } from '@/app/actions';
 import { useRouter } from 'next/navigation';
+import ConditionList from './ConditionList';
 
 export default function EndpointEditor({ endpoint }: { endpoint: EndpointConfig }) {
     const [config, setConfig] = useState<EndpointConfig>(endpoint);
@@ -121,8 +122,8 @@ export default function EndpointEditor({ endpoint }: { endpoint: EndpointConfig 
                                 key={method}
                                 onClick={() => setActiveMethod(method)}
                                 className={`flex-1 py-4 px-1 text-center border-b-2 font-medium text-sm ${activeMethod === method
-                                        ? 'border-indigo-500 text-indigo-600'
-                                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                                    ? 'border-indigo-500 text-indigo-600'
+                                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                                     }`}
                             >
                                 {method}
@@ -168,6 +169,20 @@ export default function EndpointEditor({ endpoint }: { endpoint: EndpointConfig 
                                     <option value="conditional">Conditional</option>
                                 </select>
                             </div>
+
+                            {currentMethodConfig.mode === 'conditional' && (
+                                <ConditionList
+                                    conditions={currentMethodConfig.conditions || []}
+                                    responseSets={currentMethodConfig.responseSets}
+                                    onChange={(conditions) => setConfig({
+                                        ...config,
+                                        methods: {
+                                            ...config.methods,
+                                            [activeMethod]: { ...currentMethodConfig, conditions }
+                                        }
+                                    })}
+                                />
+                            )}
 
                             {/* Response Sets */}
                             <div className="space-y-4">

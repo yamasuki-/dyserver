@@ -1,0 +1,55 @@
+[
+  {
+    "id": "98effc4c-27f9-49bb-afa5-3ca5b917b145",
+    "path": "api/test",
+    "description": "",
+    "methods": {
+      "GET": {
+        "enabled": false,
+        "responseSets": [],
+        "mode": "default",
+        "conditions": []
+      },
+      "POST": {
+        "enabled": true,
+        "responseSets": [
+          {
+            "id": "f4248848-6ea1-49c2-a55f-5a46ea0e227a",
+            "name": "test json",
+            "statusCode": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": "{\n  \"hoge\":\"test\"\n}",
+            "isNoResponse": false
+          },
+          {
+            "id": "f61a3db0-a146-4cd4-82f0-7570526b223a",
+            "name": "no response",
+            "statusCode": 200,
+            "headers": {
+              "Content-Type": "application/json"
+            },
+            "body": "{}",
+            "isNoResponse": true
+          }
+        ],
+        "mode": "conditional",
+        "conditions": [],
+        "activeResponseSetId": "f61a3db0-a146-4cd4-82f0-7570526b223a"
+      },
+      "PUT": {
+        "enabled": false,
+        "responseSets": [],
+        "mode": "default",
+        "conditions": []
+      },
+      "DELETE": {
+        "enabled": false,
+        "responseSets": [],
+        "mode": "default",
+        "conditions": []
+      }
+    }
+  }
+]
