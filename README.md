@@ -1,36 +1,93 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# DyServer (Dummy Server)
 
-## Getting Started
+APIテスト用のダミーサーバーアプリケーションです。
+Next.js (App Router) で構築されており、GUI画面からエンドポイントの作成、レスポンスの定義、条件分岐ロジックの設定、リクエストログの確認などが可能です。
 
-First, run the development server:
+## 主な機能
+
+- **エンドポイント管理**: 任意のパス（例: `/api/users/1`）のエンドポイントを作成・編集・削除できます。
+- **レスポンス設定**: ステータスコード、ヘッダー、ボディを自由に定義できます。
+- **レスポンスモード**:
+    - **Default**: 固定のレスポンスを返します。
+    - **Random**: 定義した複数のレスポンスセットからランダムに返します。
+    - **Conditional**: リクエストヘッダー、クエリパラメータ、ボディの内容に応じてレスポンスを切り替えます。
+- **ログ機能**: 受信したリクエストと返却したレスポンスのログを記録・閲覧できます。
+- **データ永続化**: 設定データやログはローカルファイル（`./data` ディレクトリ）にJSON形式で保存されます。
+
+## 使い方
+
+### 1. 起動方法
+
+依存パッケージをインストールし、開発サーバーを起動します。
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+ブラウザで [http://localhost:3000](http://localhost:3000) にアクセスすると管理画面が表示されます。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 2. エンドポイントの作成
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1.  トップページの「新規作成」ボタンをクリックします。
+2.  **Path**: エンドポイントのパスを入力します（例: `api/test`）。
+3.  **Description**: 必要に応じて説明を入力します。
+4.  「作成」をクリックします。
 
-## Learn More
+### 3. レスポンスの定義
 
-To learn more about Next.js, take a look at the following resources:
+1.  エンドポイント一覧から作成したエンドポイントの「Edit」をクリックします。
+2.  対象のHTTPメソッド（GET, POSTなど）タブを選択し、右上のトグルスイッチで「Enabled」にします。
+3.  **Response Sets** セクションの「+ Add Set」でレスポンスパターンを追加します。
+    - **Status Code**: 200, 404, 500 など。
+    - **Headers**: JSON形式で記述します（例: `{"Content-Type": "application/json"}`）。
+    - **Body**: レスポンスボディを記述します。
+    - **No Response**: チェックを入れると、意図的に応答を返さない（タイムアウト）挙動をシミュレートします。
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 4. 条件分岐の設定 (Conditional Mode)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1.  **Response Mode** を「Conditional」に変更します。
+2.  **Conditions** リストが表示されるので、「+ Add Condition」で条件を追加します。
+3.  条件（Target, Key, Value）と、一致した場合に返す Response Set を選択します。
+    - 例: `Query` の `type` が `error` の場合 -> `Error 400` レスポンスを返す。
 
-## Deploy on Vercel
+### 5. APIの呼び出し
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+作成したエンドポイントに対して、httpクライアント（curl, Postman, ブラウザなど）からリクエストを送信します。
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+curl http://localhost:3000/api/test
+```
+
+### 6. ログの確認
+
+サイドメニューの「Logs」から、過去のリクエストログを確認できます。
+パスやメソッド、ステータスコードでフィルタリングが可能です。
+
+### 7. 全体設定
+
+サイドメニューの「Settings」から、以下の設定が可能です。
+- リクエスト/レスポンスログの保存ON/OFF
+- 現在の設定（エンドポイント定義＋全体設定）のJSONエクスポート
+
+## デプロイ (Docker)
+
+Dockerコンテナとして実行することも可能です。
+
+```bash
+# ビルド
+docker build -t dyserver .
+
+# 実行
+docker run -p 3000:3000 dyserver
+```
+
+## ディレクトリ構成
+
+- `src/app`: Next.js App Router ページ/APIルート
+- `src/lib`: コアロジック (RequestHandler, Repository)
+- `data`: 設定ファイルとログの保存先 (実行時に生成されます)
+
+## License
+
+MIT
